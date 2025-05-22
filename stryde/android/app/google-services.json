@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "401309111879",
+    "project_id": "stryde-278e4",
+    "storage_bucket": "stryde-278e4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:401309111879:android:77da196ee7c910f4230362",
+        "android_client_info": {
+          "package_name": "com.example.stryde"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCg0BuK-PYj5emnzdgYFne4oLmvLr1Kld0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

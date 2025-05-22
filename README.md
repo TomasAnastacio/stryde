@@ -36,7 +36,7 @@ O objetivo é oferecer uma ferramenta prática para quem quer melhorar a saúde,
 
 ## 💻 Tecnologias Utilizadas
 - **Flutter** e **Dart**: Desenvolvimento movel multiplataforma.
-- **Supabase**: Autenticação e armazenamento de dados.
+- **FireBase**: Autenticação e armazenamento de dados.
 - **Provider/Riverpod**: Gestão de estado.
 - **API para alimentos**: https://platform.fatsecret.com/platform-api.
 - **Figma para design**: https://www.figma.com/design/h3hcxBIGHgCTUH0aQlSXFk/Design_PF?node-id=0-1&t=PMTSJIXCALSsCexN-1
