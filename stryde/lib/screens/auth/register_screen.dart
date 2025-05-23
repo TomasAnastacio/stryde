@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../utils/constants.dart';
 import '../../widgets/custom_button.dart';
+import 'personal_data_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -45,47 +46,49 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         ),
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          color: AppColors.white,
-        ),
-        child: Stack(
-          children: [
-            // Ondas verdes no topo
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                height: 100,
-                decoration: const BoxDecoration(
-                  color: AppColors.primaryGreen,
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(30),
-                    bottomRight: Radius.circular(30),
+      body: SafeArea(
+        child: Container(
+          decoration: const BoxDecoration(
+            color: AppColors.white,
+          ),
+          height: MediaQuery.of(context).size.height,
+          child: Stack(
+            children: [
+              // Ondas verdes no topo
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  height: 100,
+                  decoration: const BoxDecoration(
+                    color: AppColors.primaryGreen,
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(30),
+                      bottomRight: Radius.circular(30),
+                    ),
                   ),
                 ),
               ),
-            ),
-            // Ondas verdes no fundo
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                height: 100,
-                decoration: const BoxDecoration(
-                  color: AppColors.primaryGreen,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30),
-                    topRight: Radius.circular(30),
+              // Ondas verdes no fundo
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  height: 100,
+                  decoration: const BoxDecoration(
+                    color: AppColors.primaryGreen,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30),
+                    ),
                   ),
                 ),
               ),
-            ),
-            // Conteúdo principal
-            SingleChildScrollView(
-              child: Padding(
+              // Conteúdo principal
+              SingleChildScrollView(
+                child: Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Form(
                   key: _formKey,
@@ -258,7 +261,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           if (_formKey.currentState!.validate()) {
                             // Lógica de registro aqui
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text("Processando registro...")),
+                              const SnackBar(content: Text("Registro realizado com sucesso!")),
+                            );
+                            
+                            // Navegar para a tela de dados pessoais
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const PersonalDataScreen(),
+                              ),
                             );
                           }
                         },
@@ -299,7 +310,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
           ],
         ),
-      ),
+        ),
+      )
     );
   }
 }
