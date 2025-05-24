@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../utils/constants.dart';
+import 'profile_screen.dart';
 
 class MainPageV3 extends StatelessWidget {
   const MainPageV3({Key? key}) : super(key: key);
@@ -13,10 +14,14 @@ class MainPageV3 extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header with date and profile
+              // Header with date and back button
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back_ios, size: 20),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -28,7 +33,7 @@ class MainPageV3 extends StatelessWidget {
                         ),
                       ),
                       const Text(
-                        'Hello, Julietta',
+                        'Your meals for today:',
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -36,10 +41,8 @@ class MainPageV3 extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const CircleAvatar(
-                    backgroundColor: Colors.grey,
-                    child: Icon(Icons.person, color: Colors.white),
-                  ),
+                  // Empty space to balance the back button
+                  const SizedBox(width: 48),
                 ],
               ),
               const SizedBox(height: 24),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'screens/main_page_V3.dart';
+import 'screens/main_page_V2.dart';
+import 'screens/nutrition_page.dart';
+import 'screens/profile_screen.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -27,7 +29,7 @@ class MyApp extends StatelessWidget {
         ),
         fontFamily: 'Roboto',
       ),
-      home: const MainPageV3(),
+      home: const MainPage(),
     );
   }
 }

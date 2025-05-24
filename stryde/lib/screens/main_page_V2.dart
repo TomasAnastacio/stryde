@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:stryde/screens/nutrition_page.dart';
+import 'package:stryde/screens/profile_screen.dart';
+import 'package:stryde/screens/progress_screen.dart';
+import 'package:stryde/screens/goals_screen.dart';
 import '../utils/constants.dart';
 
 class MainPage extends StatelessWidget {
@@ -10,13 +14,46 @@ class MainPage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: AppColors.primaryGreen,
         elevation: 0,
-        title: const Text(
-          "Stryde",
-          style: TextStyle(
-            color: AppColors.white,
-            fontWeight: FontWeight.bold,
-          ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              _getCurrentDate(),
+              style: const TextStyle(
+                fontSize: 14,
+                color: AppColors.white,
+              ),
+            ),
+            const Text(
+              "Welcome, Tomás Anastacio",
+              style: TextStyle(
+                fontSize: 24,
+                color: AppColors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
+        actions: [
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ProfileScreen(),
+                ),
+              );
+            },
+            child: Container(
+              margin: const EdgeInsets.only(right: 16),
+              child: const CircleAvatar(
+                backgroundColor: Colors.white,
+                radius: 18,
+                child: Icon(Icons.person, color: AppColors.primaryGreen),
+              ),
+            ),
+          ),
+        ],
       ),
       body: Container(
         decoration: const BoxDecoration(
@@ -46,24 +83,8 @@ class MainPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 120),
-                  const Text(
-                    "Welcome to Stryde",
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  const Text(
-                    "Your fitness journey starts here",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: AppColors.darkGrey,
-                    ),
-                  ),
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 120), //Alterar posição do menu
+                  const SizedBox(height: 40), //Alterar altura do menu
                   // Main content cards
                   Expanded(
                     child: GridView.count(
@@ -72,24 +93,51 @@ class MainPage extends StatelessWidget {
                       mainAxisSpacing: 15,
                       children: [
                         _buildFeatureCard(
-                          icon: Icons.directions_run,
-                          title: "Workouts",
+                          icon: Icons.track_changes,
+                          title: "Goals & Stats",
                           color: AppColors.primaryGreen,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const GoalsScreen(),
+                              ),
+                            );
+                          },
                         ),
                         _buildFeatureCard(
                           icon: Icons.restaurant_menu,
                           title: "Nutrition",
                           color: AppColors.lightGreen,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const MainPageV3(),
+                              ),
+                            );
+                          },
                         ),
                         _buildFeatureCard(
                           icon: Icons.insights,
                           title: "Progress",
                           color: AppColors.lightGreen,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const ProgressScreen(),
+                              ),
+                            );
+                          },
                         ),
                         _buildFeatureCard(
                           icon: Icons.people,
                           title: "Community",
                           color: AppColors.primaryGreen,
+                          onTap: () {
+                            // Community functionality will be added later
+                          },
                         ),
                       ],
                     ),
@@ -100,73 +148,66 @@ class MainPage extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: AppColors.primaryGreen,
-        unselectedItemColor: AppColors.darkGrey,
-        currentIndex: 0,
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.fitness_center),
-            label: 'Workouts',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bar_chart),
-            label: 'Stats',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-      ),
+      // Bottom navigation bar removed
     );
+  }
+
+  String _getCurrentDate() {
+    final now = DateTime.now();
+    final weekdays = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
+    final months = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+    
+    final weekday = weekdays[now.weekday - 1]; // weekday is 1-7 in DateTime
+    final day = now.day;
+    final month = months[now.month - 1]; // month is 1-12 in DateTime
+    
+    return '$weekday, $day de $month';
   }
 
   Widget _buildFeatureCard({
     required IconData icon,
     required String title,
     required Color color,
+    VoidCallback? onTap,
   }) {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: Container(
-        decoration: BoxDecoration(
+    return GestureDetector(
+      onTap: onTap,
+      child: Card(
+        elevation: 4,
+        shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              color.withOpacity(0.7),
-              color,
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                color.withOpacity(0.7),
+                color,
+              ],
+            ),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                size: 40,
+                color: Colors.white,
+              ),
+              const SizedBox(height: 10),
+              Text(
+                title,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
             ],
           ),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              icon,
-              size: 40,
-              color: Colors.white,
-            ),
-            const SizedBox(height: 10),
-            Text(
-              title,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
-            ),
-          ],
         ),
       ),
     );
