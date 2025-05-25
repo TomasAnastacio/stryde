@@ -46,51 +46,53 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         ),
       ),
-      body: SafeArea(
-        child: Container(
-          decoration: const BoxDecoration(
-            color: AppColors.white,
-          ),
-          height: MediaQuery.of(context).size.height,
-          child: Stack(
-            children: [
-              // Ondas verdes no topo
-              Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  height: 100,
-                  decoration: const BoxDecoration(
-                    color: AppColors.primaryGreen,
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(30),
-                      bottomRight: Radius.circular(30),
-                    ),
+      body: Container(
+        decoration: const BoxDecoration(
+          color: AppColors.white,
+        ),
+        child: Stack(
+          children: [
+            // Ondas verdes no topo
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                height: 100,
+                decoration: const BoxDecoration(
+                  color: AppColors.primaryGreen,
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(30),
+                    bottomRight: Radius.circular(30),
                   ),
                 ),
               ),
-              // Ondas verdes no fundo
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  height: 100,
-                  decoration: const BoxDecoration(
-                    color: AppColors.primaryGreen,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30),
-                    ),
+            ),
+            // Ondas verdes no fundo - com bordas arredondadas no topo
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                height: 100,
+                decoration: const BoxDecoration(
+                  color: AppColors.primaryGreen,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(30),
+                    topRight: Radius.circular(30),
                   ),
                 ),
               ),
-              // Conteúdo principal
-              SingleChildScrollView(
-                child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Form(
+            ),
+            // Conteúdo principal
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Center(
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+                    child: Form(
                   key: _formKey,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -133,13 +135,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         decoration: InputDecoration(
                           labelText: "Nome completo",
                           prefixIcon: const Icon(Icons.person, color: AppColors.primaryGreen),
+                          filled: true,
+                          fillColor: Colors.white,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(25),
-                            borderSide: const BorderSide(color: AppColors.primaryGreen),
+                            borderSide: const BorderSide(color: AppColors.primaryGreen, width: 1),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(25),
                             borderSide: const BorderSide(color: AppColors.primaryGreen, width: 2),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(25),
+                            borderSide: const BorderSide(color: AppColors.primaryGreen, width: 1),
                           ),
                         ),
                         validator: (value) {
@@ -149,20 +157,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           return null;
                         },
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 25),
                       // Campo de email
                       TextFormField(
                         controller: _emailController,
                         decoration: InputDecoration(
                           labelText: "Email",
                           prefixIcon: const Icon(Icons.email, color: AppColors.primaryGreen),
+                          filled: true,
+                          fillColor: Colors.white,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(25),
-                            borderSide: const BorderSide(color: AppColors.primaryGreen),
+                            borderSide: const BorderSide(color: AppColors.primaryGreen, width: 1),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(25),
                             borderSide: const BorderSide(color: AppColors.primaryGreen, width: 2),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(25),
+                            borderSide: const BorderSide(color: AppColors.primaryGreen, width: 1),
                           ),
                         ),
                         keyboardType: TextInputType.emailAddress,
@@ -177,7 +191,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           return null;
                         },
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 25),
                       // Campo de senha
                       TextFormField(
                         controller: _passwordController,
@@ -185,6 +199,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         decoration: InputDecoration(
                           labelText: "Senha",
                           prefixIcon: const Icon(Icons.lock, color: AppColors.primaryGreen),
+                          filled: true,
+                          fillColor: Colors.white,
                           suffixIcon: IconButton(
                             icon: Icon(
                               _obscurePassword ? Icons.visibility : Icons.visibility_off,
@@ -198,11 +214,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(25),
-                            borderSide: const BorderSide(color: AppColors.primaryGreen),
+                            borderSide: const BorderSide(color: AppColors.primaryGreen, width: 1),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(25),
                             borderSide: const BorderSide(color: AppColors.primaryGreen, width: 2),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(25),
+                            borderSide: const BorderSide(color: AppColors.primaryGreen, width: 1),
                           ),
                         ),
                         validator: (value) {
@@ -215,7 +235,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           return null;
                         },
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 25),
                       // Campo de confirmação de senha
                       TextFormField(
                         controller: _confirmPasswordController,
@@ -223,6 +243,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         decoration: InputDecoration(
                           labelText: "Confirmar senha",
                           prefixIcon: const Icon(Icons.lock_outline, color: AppColors.primaryGreen),
+                          filled: true,
+                          fillColor: Colors.white,
                           suffixIcon: IconButton(
                             icon: Icon(
                               _obscureConfirmPassword ? Icons.visibility : Icons.visibility_off,
@@ -236,11 +258,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(25),
-                            borderSide: const BorderSide(color: AppColors.primaryGreen),
+                            borderSide: const BorderSide(color: AppColors.primaryGreen, width: 1),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(25),
                             borderSide: const BorderSide(color: AppColors.primaryGreen, width: 2),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(25),
+                            borderSide: const BorderSide(color: AppColors.primaryGreen, width: 1),
                           ),
                         ),
                         validator: (value) {
@@ -253,7 +279,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           return null;
                         },
                       ),
-                      const SizedBox(height: 30),
+                      const SizedBox(height: 35),
                       // Botão de Registro
                       CustomButton(
                         text: "Registar",
@@ -308,10 +334,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               ),
             ),
+          ),
+            ),
           ],
         ),
-        ),
-      )
+      ),
     );
   }
 }
