@@ -1,12 +1,124 @@
 import 'package:flutter/material.dart';
 import '../utils/constants.dart';
+import '../models/meal.dart';
+import '../services/meal_service.dart';
+import 'food_search_screen.dart';
 import 'profile_screen.dart';
 
-class MainPageV3 extends StatelessWidget {
+class MainPageV3 extends StatefulWidget {
   const MainPageV3({Key? key}) : super(key: key);
 
   @override
+  State<MainPageV3> createState() => _MainPageV3State();
+}
+
+class _MainPageV3State extends State<MainPageV3> {
+  final MealService _mealService = MealService();
+  List<Meal> _meals = [];
+  Map<String, double> _totalNutrition = {
+    'calories': 0,
+    'protein': 0,
+    'carbs': 0,
+    'fat': 0,
+  };
+  DateTime _selectedDate = DateTime.now();
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMeals();
+  }
+
+  Future<void> _loadMeals() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final meals = await _mealService.getMealsForDate(_selectedDate);
+      final nutrition = await _mealService.getTotalNutritionForDate(_selectedDate);
+      
+      setState(() {
+        _meals = meals;
+        _totalNutrition = nutrition;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro ao carregar refeições: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _navigateToFoodSearch(MealType mealType) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FoodSearchScreen(
+          mealType: mealType,
+          date: _selectedDate,
+        ),
+      ),
+    );
+
+    if (result == true) {
+      _loadMeals(); // Reload meals after adding food
+    }
+  }
+
+  String _formatDate(DateTime date) {
+    const months = [
+      'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
+      'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'
+    ];
+    const weekdays = [
+      'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'
+    ];
+    
+    final weekday = weekdays[date.weekday - 1];
+    final day = date.day;
+    final month = months[date.month - 1];
+    
+    return '$weekday, $day de $month';
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryGreen),
+          ),
+        ),
+      );
+    }
+
+    final totalCalories = _totalNutrition['calories'] ?? 0;
+    final totalProtein = _totalNutrition['protein'] ?? 0;
+    final totalCarbs = _totalNutrition['carbs'] ?? 0;
+    final totalFat = _totalNutrition['fat'] ?? 0;
+    
+    // Calculate progress (assuming daily goals)
+    const dailyCalorieGoal = 2000.0;
+    const dailyProteinGoal = 150.0;
+    const dailyCarbGoal = 250.0;
+    const dailyFatGoal = 65.0;
+    
+    final calorieProgress = (totalCalories / dailyCalorieGoal).clamp(0.0, 1.0);
+    final proteinProgress = (totalProtein / dailyProteinGoal).clamp(0.0, 1.0);
+    final carbProgress = (totalCarbs / dailyCarbGoal).clamp(0.0, 1.0);
+    final fatProgress = (totalFat / dailyFatGoal).clamp(0.0, 1.0);
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -22,27 +134,45 @@ class MainPageV3 extends StatelessWidget {
                     icon: const Icon(Icons.arrow_back_ios, size: 20),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Quarta, 2 de fevereiro',
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 14,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          _formatDate(_selectedDate),
+                          style: const TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14,
+                          ),
                         ),
-                      ),
-                      const Text(
-                        'Your meals for today:',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
+                        const Text(
+                          'Suas refeições de hoje:',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                  // Empty space to balance the back button
-                  const SizedBox(width: 48),
+                  // Date picker button
+                  IconButton(
+                    icon: const Icon(Icons.calendar_today, size: 20),
+                    onPressed: () async {
+                      final date = await showDatePicker(
+                        context: context,
+                        initialDate: _selectedDate,
+                        firstDate: DateTime.now().subtract(const Duration(days: 365)),
+                        lastDate: DateTime.now().add(const Duration(days: 365)),
+                      );
+                      if (date != null) {
+                        setState(() {
+                          _selectedDate = date;
+                        });
+                        _loadMeals();
+                      }
+                    },
+                  ),
                 ],
               ),
               const SizedBox(height: 24),
@@ -70,7 +200,7 @@ class MainPageV3 extends StatelessWidget {
                       child: Stack(
                         children: [
                           CircularProgressIndicator(
-                            value: 0.7,
+                            value: calorieProgress,
                             strokeWidth: 10,
                             backgroundColor: Colors.grey[200],
                             valueColor: const AlwaysStoppedAnimation<Color>(
@@ -79,15 +209,15 @@ class MainPageV3 extends StatelessWidget {
                           Center(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
+                              children: [
                                 Text(
-                                  '745',
-                                  style: TextStyle(
+                                  totalCalories.toStringAsFixed(0),
+                                  style: const TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                Text(
+                                const Text(
                                   'Cal',
                                   style: TextStyle(
                                     color: Colors.grey,
@@ -108,23 +238,23 @@ class MainPageV3 extends StatelessWidget {
                         children: [
                           _buildMacroProgress(
                             'Proteínas',
-                            0.6,
-                            AppColors.primaryGreen,
-                            '45g left',
+                            proteinProgress,
+                            Colors.blue,
+                            '${(dailyProteinGoal - totalProtein).clamp(0, dailyProteinGoal).toStringAsFixed(0)}g restantes',
                           ),
                           const SizedBox(height: 12),
                           _buildMacroProgress(
                             'Carboidratos',
-                            0.3,
-                            Colors.red,
-                            '72g left',
+                            carbProgress,
+                            Colors.orange,
+                            '${(dailyCarbGoal - totalCarbs).clamp(0, dailyCarbGoal).toStringAsFixed(0)}g restantes',
                           ),
                           const SizedBox(height: 12),
                           _buildMacroProgress(
                             'Gorduras',
-                            0.4,
-                            Colors.yellow,
-                            '34g left',
+                            fatProgress,
+                            Colors.red,
+                            '${(dailyFatGoal - totalFat).clamp(0, dailyFatGoal).toStringAsFixed(0)}g restantes',
                           ),
                         ],
                       ),
@@ -138,22 +268,12 @@ class MainPageV3 extends StatelessWidget {
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(
-                    children: [
-                      _buildMealSection('Pequeno-almoço', 211, [
-                        _buildFoodItem('Peito De Frango', '100g', 108),
-                        _buildFoodItem('Esparguete Cozido', '100g', 355),
-                      ]),
-                      const SizedBox(height: 16),
-                      _buildMealSection('Almoço', 211, [
-                        _buildFoodItem('Peito De Frango', '100g', 108),
-                        _buildFoodItem('Esparguete Cozido', '100g', 355),
-                      ]),
-                      const SizedBox(height: 16),
-                      _buildMealSection('Alomço', 211, [
-                        _buildFoodItem('Peito De Frango', '100g', 108),
-                        _buildFoodItem('Esparguete Cozido', '100g', 355),
-                      ]),
-                    ],
+                    children: _meals.map((meal) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: _buildMealSection(meal),
+                      );
+                    }).toList(),
                   ),
                 ),
               ),
@@ -193,7 +313,14 @@ class MainPageV3 extends StatelessWidget {
     );
   }
 
-  Widget _buildMealSection(String title, int calories, List<Widget> foodItems) {
+  Widget _buildMealSection(Meal meal) {
+    final foodItems = meal.foodItems.map((mealFoodItem) {
+      return _buildFoodItem(
+        mealFoodItem.foodItem.name,
+        mealFoodItem.displayPortion,
+        mealFoodItem.totalCalories.toInt(),
+      );
+    }).toList();
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -211,33 +338,33 @@ class MainPageV3 extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  meal.displayName,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              Text(
-                '$calories Cal',
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey,
+                Text(
+                  '${meal.totalCalories.toStringAsFixed(0)} Cal',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey,
+                  ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
           const SizedBox(height: 16),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
-              children: [
-                ...foodItems,
-                _buildAddFoodButton(),
-              ],
-            ),
+                children: [
+                  ...foodItems,
+                  _buildAddFoodButton(meal.type),
+                ],
+              ),
           ),
         ],
       ),
@@ -282,18 +409,21 @@ class MainPageV3 extends StatelessWidget {
     );
   }
 
-  Widget _buildAddFoodButton() {
-    return Container(
-      margin: const EdgeInsets.only(right: 16),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: const Icon(
-        Icons.add_circle_outline,
-        color: AppColors.primaryGreen,
-        size: 32,
+  Widget _buildAddFoodButton(MealType mealType) {
+    return GestureDetector(
+      onTap: () => _navigateToFoodSearch(mealType),
+      child: Container(
+        margin: const EdgeInsets.only(right: 16),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.grey[100],
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: const Icon(
+          Icons.add_circle_outline,
+          color: AppColors.primaryGreen,
+          size: 32,
+        ),
       ),
     );
   }
