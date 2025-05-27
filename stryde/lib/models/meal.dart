@@ -68,13 +68,22 @@ class Meal {
   }
 
   factory Meal.fromJson(Map<String, dynamic> json) {
-    return Meal(
+    print('Meal.fromJson: ${json.toString()}');
+    
+    final meal = Meal(
       type: MealType.values[json['type']],
       foodItems: (json['foodItems'] as List)
           .map((item) => MealFoodItem.fromJson(item))
           .toList(),
       date: DateTime.parse(json['date']),
     );
+    
+    print('Meal created:');
+    print('  Type: ${meal.displayName}');
+    print('  Food Items Count: ${meal.foodItems.length}');
+    print('  Total Calories: ${meal.totalCalories}');
+    
+    return meal;
   }
 }
 
@@ -87,7 +96,15 @@ class MealFoodItem {
     required this.foodItem,
     required this.quantity,
     required this.unit,
-  });
+  }) {
+    // Debug print to verify food item data
+    print('MealFoodItem created:');
+    print('  Name: ${foodItem.name}');
+    print('  Calories: ${foodItem.calories}');
+    print('  Quantity: $quantity');
+    print('  Unit: $unit');
+    print('  Total Calories: ${foodItem.calories * quantity}');
+  }
 
   double get totalCalories => foodItem.calories * quantity;
   double get totalProtein => foodItem.protein * quantity;
@@ -119,8 +136,18 @@ class MealFoodItem {
   }
 
   factory MealFoodItem.fromJson(Map<String, dynamic> json) {
+    print('MealFoodItem.fromJson: ${json.toString()}');
+    
+    final foodItemJson = json['foodItem'];
+    print('Food Item JSON: $foodItemJson');
+    
+    final foodItem = FoodItem.fromJson(foodItemJson);
+    print('Food Item created:');
+    print('  Name: ${foodItem.name}');
+    print('  Calories: ${foodItem.calories}');
+    
     return MealFoodItem(
-      foodItem: FoodItem.fromJson(json['foodItem']),
+      foodItem: foodItem,
       quantity: json['quantity']?.toDouble() ?? 1.0,
       unit: json['unit'] ?? 'g',
     );

@@ -76,6 +76,12 @@ class MealService {
   /// Add a food item to a specific meal
   Future<void> addFoodToMeal(MealType mealType, FoodItem foodItem, double quantity, String unit, DateTime date) async {
     try {
+      print('Adding food to meal:');
+      print('  Food Name: ${foodItem.name}');
+      print('  Food Calories: ${foodItem.calories}');
+      print('  Quantity: $quantity');
+      print('  Unit: $unit');
+      
       final meals = await getMealsForDate(date);
       
       // Find the meal or create it if it doesn't exist
@@ -101,9 +107,29 @@ class MealService {
         mealIndex = meals.length - 1;
       }
       
+      // Ensure food item has valid data
+      final validFoodItem = FoodItem(
+        id: foodItem.id,
+        name: foodItem.name.isNotEmpty ? foodItem.name : 'Unknown Food',
+        brand: foodItem.brand,
+        calories: foodItem.calories,
+        protein: foodItem.protein,
+        carbs: foodItem.carbs,
+        fat: foodItem.fat,
+        fiber: foodItem.fiber,
+        sugar: foodItem.sugar,
+        servingDescription: foodItem.servingDescription,
+        servingSize: foodItem.servingSize,
+        servingUnit: foodItem.servingUnit,
+      );
+      
+      print('Validated food item:');
+      print('  Name: ${validFoodItem.name}');
+      print('  Calories: ${validFoodItem.calories}');
+      
       // Add food item to meal
       final mealFoodItem = MealFoodItem(
-        foodItem: foodItem,
+        foodItem: validFoodItem,
         quantity: quantity,
         unit: unit,
       );
@@ -114,6 +140,7 @@ class MealService {
       meals[mealIndex] = targetMeal.copyWith(foodItems: updatedFoodItems);
       
       await saveMeals(meals);
+      print('Food added successfully to ${targetMeal.displayName}');
     } catch (e) {
       print('Error adding food to meal: $e');
       throw Exception('Failed to add food to meal');

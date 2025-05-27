@@ -103,16 +103,17 @@ class _MainPageV3State extends State<MainPageV3> {
       );
     }
 
-    final totalCalories = _totalNutrition['calories'] ?? 0;
-    final totalProtein = _totalNutrition['protein'] ?? 0;
-    final totalCarbs = _totalNutrition['carbs'] ?? 0;
-    final totalFat = _totalNutrition['fat'] ?? 0;
-    
-    // Calculate progress (assuming daily goals)
-    const dailyCalorieGoal = 2000.0;
-    const dailyProteinGoal = 150.0;
-    const dailyCarbGoal = 250.0;
-    const dailyFatGoal = 65.0;
+    // Get total nutrition values
+    final totalCalories = _totalNutrition['calories'] ?? 0.0;
+    final totalProtein = _totalNutrition['protein'] ?? 0.0;
+    final totalCarbs = _totalNutrition['carbs'] ?? 0.0;
+    final totalFat = _totalNutrition['fat'] ?? 0.0;
+
+    // TODO: These should come from user preferences/profile
+    final dailyCalorieGoal = 2000.0;
+    final dailyProteinGoal = 150.0;
+    final dailyCarbGoal = 250.0;
+    final dailyFatGoal = 65.0;
     
     final calorieProgress = (totalCalories / dailyCalorieGoal).clamp(0.0, 1.0);
     final proteinProgress = (totalProtein / dailyProteinGoal).clamp(0.0, 1.0);
