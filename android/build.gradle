@@ -1,0 +1,11 @@
+android {
+    // ... existing code ...
+    ndkVersion "27.0.12077973"
+    // ... existing code ...
+}
+
+buildscript {
+    dependencies {
+        classpath 'com.google.gms:google-services:4.4.0'
+    }
+}

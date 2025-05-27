@@ -4,9 +4,6 @@ import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
 
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
-
 /// Default [FirebaseOptions] for use with your Firebase apps.
 ///
 /// Example:
@@ -20,10 +17,7 @@ import 'firebase_options.dart';
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -31,15 +25,9 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -51,6 +39,16 @@ class DefaultFirebaseOptions {
         );
     }
   }
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyBQw3ig9GNgznSCbTzINeXKuYqzD0OgbMs',
+    appId: '1:401309111879:web:1a8e1f0da087e8d1230362',
+    messagingSenderId: '401309111879',
+    projectId: 'stryde-278e4',
+    authDomain: 'stryde-278e4.firebaseapp.com',
+    storageBucket: 'stryde-278e4.firebasestorage.app',
+    measurementId: 'G-XTEJ5FMSBH',
+  );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCg0BuK-PYj5emnzdgYFne4oLmvLr1Kld0',
@@ -67,5 +65,24 @@ class DefaultFirebaseOptions {
     projectId: 'stryde-278e4',
     storageBucket: 'stryde-278e4.firebasestorage.app',
     iosBundleId: 'com.example.stryde',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyCGndgW0ky2XlCS-HJgeo-hDrpIKC3pFuc',
+    appId: '1:401309111879:ios:0e27d3e4512df4bf230362',
+    messagingSenderId: '401309111879',
+    projectId: 'stryde-278e4',
+    storageBucket: 'stryde-278e4.firebasestorage.app',
+    iosBundleId: 'com.example.stryde',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyBQw3ig9GNgznSCbTzINeXKuYqzD0OgbMs',
+    appId: '1:401309111879:web:6fc7ea989e365806230362',
+    messagingSenderId: '401309111879',
+    projectId: 'stryde-278e4',
+    authDomain: 'stryde-278e4.firebaseapp.com',
+    storageBucket: 'stryde-278e4.firebasestorage.app',
+    measurementId: 'G-FQZWVMXQHX',
   );
 }

@@ -3,7 +3,7 @@ import '../utils/constants.dart';
 
 class CustomButton extends StatelessWidget {
   final String text;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;  // Alterado para aceitar null
   final Color backgroundColor;
   final Color textColor;
   final double width;
@@ -12,7 +12,7 @@ class CustomButton extends StatelessWidget {
   const CustomButton({
     Key? key,
     required this.text,
-    required this.onPressed,
+    this.onPressed,  // Removido o required
     this.backgroundColor = AppColors.primaryGreen,
     this.textColor = AppColors.white,
     this.width = double.infinity,

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../utils/constants.dart';
 import '../../widgets/custom_button.dart';
+import '../../services/auth_service.dart';
 import 'register_screen.dart';
+import 'personal_data_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -15,6 +17,125 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
+  bool _isLoading = false;
+  final AuthService _authService = AuthService();
+
+  void _handleSignIn() {
+  if (!_isLoading) {
+    _signIn();
+  }
+}
+
+  // Método para fazer login com email e senha
+  Future<void> _signIn() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
+      
+      try {
+        // Login com email e senha
+        await _authService.signInWithEmailAndPassword(
+          _emailController.text.trim(),
+          _passwordController.text.trim(),
+        );
+        
+        if (!mounted) return;
+        
+        // Verificar se o perfil está completo
+        bool hasCompletedProfile = await _authService.hasCompletedProfile(
+          _authService.currentUser!.uid
+        );
+        
+        if (!mounted) return;
+        
+        if (hasCompletedProfile) {
+          // Navegar para a tela principal
+          Navigator.pushNamedAndRemoveUntil(
+            context, 
+            '/home', 
+            (route) => false
+          );
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Login realizado com sucesso!"))
+          );
+        } else {
+          // Navegar para a tela de dados pessoais
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const PersonalDataScreen(),
+            ),
+          );
+        }
+      } catch (e) {
+        if (!mounted) return;
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Erro ao fazer login: ${e.toString()}"))
+        );
+      } finally {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
+    }
+  }
+
+  // Método para fazer login com Google
+  Future<void> _signInWithGoogle() async {
+    setState(() {
+      _isLoading = true;
+    });
+    
+    try {
+      // Login com Google
+      await _authService.signInWithGoogle();
+      
+      if (!mounted) return;
+      
+      // Verificar se o perfil está completo
+      bool hasCompletedProfile = await _authService.hasCompletedProfile(
+        _authService.currentUser!.uid
+      );
+      
+      if (!mounted) return;
+      
+      if (hasCompletedProfile) {
+        // Navegar para a tela principal
+        Navigator.pushNamedAndRemoveUntil(
+          context, 
+          '/home', 
+          (route) => false
+        );
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Login realizado com sucesso!"))
+        );
+      } else {
+        // Navegar para a tela de dados pessoais
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const PersonalDataScreen(),
+          ),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Erro ao fazer login com Google: ${e.toString()}"))
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -118,7 +239,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 40.0),
                     // Campo de email
                     TextFormField(
                       controller: _emailController,
@@ -142,7 +263,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 20.0),
                     // Campo de senha
                     TextFormField(
                       controller: _passwordController,
@@ -198,18 +319,44 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 30),
                     // Botão de Login
                     CustomButton(
-                      text: "Entrar",
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          // Lógica de autenticação aqui
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("Processando login...")),
-                          );
-                        }
-                      },
+                      text: _isLoading ? "Processando..." : "Entrar",
+                      onPressed: _isLoading ? null : _handleSignIn,
                     ),
-                    const SizedBox(height: 20),
-                    // Link para Registrar
+                    
+                    const SizedBox(height: 20.0),
+                    
+                    // Ou continue com
+                    Row(
+                      children: [
+                        const Expanded(child: Divider(color: Colors.grey)),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          child: Text("Ou continue com", style: TextStyle(color: Colors.grey)),
+                        ),
+                        const Expanded(child: Divider(color: Colors.grey)),
+                      ],
+                    ),
+                    
+                    const SizedBox(height: 20.0),
+                    
+                    // Botão de login com Google
+                    OutlinedButton.icon(
+                      icon: Image.asset('assets/images/google_logo.png', height: 24),
+                      label: const Text(
+                        "Entrar com Google",
+                        style: TextStyle(color: Colors.black87),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        side: const BorderSide(color: Colors.grey),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                      ),
+                      onPressed: _isLoading ? null : _signInWithGoogle,
+                    ),
+                    const SizedBox(height: 20.0),
+                    // Link para registro
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -222,8 +369,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            // Navegação para a tela de registro
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => const RegisterScreen()));
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const RegisterScreen(),
+                              ),
+                            );
                           },
                           child: const Text(
                             "Registre-se",
