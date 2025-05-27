@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'screens/auth/home_page.dart';
+import 'screens/auth/personal_data_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   // Desativa todas as bandeiras de debug
   debugPaintSizeEnabled = false;
   debugPaintBaselinesEnabled = false;
@@ -29,6 +36,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Roboto',
       ),
       home: const HomePage(),
+      //home: const PersonalDataScreen(),
     );
   }
 }
