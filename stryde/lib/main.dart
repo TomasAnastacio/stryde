@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+
 import 'package:flutter/rendering.dart';
 import 'screens/auth/home_page.dart';
-import 'screens/auth/personal_data_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
+
+import 'package:firebase_core/firebase_core.dart';
+import 'screens/main_page_V2.dart';
+import 'screens/nutrition_page.dart';
+import 'screens/profile_screen.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -10,12 +15,14 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  
   // Desativa todas as bandeiras de debug
   debugPaintSizeEnabled = false;
   debugPaintBaselinesEnabled = false;
   debugPaintPointersEnabled = false;
   debugPaintLayerBordersEnabled = false;
   debugRepaintRainbowEnabled = false;
+
   runApp(const MyApp());
 }
 
@@ -35,8 +42,7 @@ class MyApp extends StatelessWidget {
         ),
         fontFamily: 'Roboto',
       ),
-      home: const HomePage(),
-      //home: const PersonalDataScreen(),
+      home: const MainPage(),
     );
   }
 }

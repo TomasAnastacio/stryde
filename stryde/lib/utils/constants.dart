@@ -5,6 +5,7 @@ class AppColors {
   static const Color lightGreen = Color(0xFFB4E9BC);
   static const Color white = Colors.white;
   static const Color black = Colors.black;
+  static const Color darkGrey = Color.fromARGB(255, 44, 44, 44);
 }
 
 class AppTextStyles {
